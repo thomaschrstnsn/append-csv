@@ -15,4 +15,4 @@ clone/download repo
 
 ## usage
 
-`node append.js csv/*.csv` will append all the csv files in the csv folder and output to output.csv in the current directory.
+`node append.js csv/*.csv` will append all the csv files in the csv folder and output to `output.csv` in the current directory.
