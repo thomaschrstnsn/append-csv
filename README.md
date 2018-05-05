@@ -9,8 +9,8 @@ https://nodejs.org/
 
 ## install
 
-clone/download repo
-
+- clone/download repo
+- open terminal/console and `cd` into where you put this
 - `npm i`
 
 ## usage
