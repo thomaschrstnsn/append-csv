@@ -1,4 +1,4 @@
-# append csv files
+# append csv files (as a service)
 
 ## requirements
 
@@ -15,4 +15,4 @@ https://nodejs.org/
 
 ## usage
 
-`node append.js csv/*.csv` will append all the csv files in the csv folder and output to `output.csv` in the current directory.
+`node append.js` and open http://localhost:3000 in a browser.
