@@ -1,12 +1,14 @@
 const parse = require('csv-parse/lib/sync')
 const stringify = require('csv-stringify/lib/sync')
-var fs = require('fs')
+const fs = require('fs')
+const express = require('express')
+const fileUpload = require('express-fileupload');
+const app = express()
 
-const csv_object = function (fn) {
-  var content = fs.readFileSync(fn, 'utf-8')
-  var tuples = parse(content)
+const csv_object = function (buff) {
+  var tuples = parse(buff)
   var object = {}
-  tuples.map(([k,v]) => object[k] = v)
+  tuples.map(([k, v]) => object[k] = v)
   return object;
 }
 
@@ -29,9 +31,30 @@ const obj_as_rows = function (obj) {
   return Object.keys(obj).map(k => [k].concat(obj[k]))
 }
 
-const objs = process.argv.slice(2).map(csv_object)
-const appended = append(objs)
-const rows = obj_as_rows(appended)
-const csv = stringify(rows)
+app.use(fileUpload());
 
-fs.writeFileSync('output.csv', csv)
+app.post('/upload', function (req, res) {
+  if (!req.files || !req.files.csvFiles)
+    return res.status(400).send('No files were uploaded.')
+
+  if (!req.files.csvFiles.length)
+     return res.status(400).send('Send more than one file.')
+
+  const csvFiles = req.files.csvFiles
+
+  const objs = csvFiles.map(x => csv_object(x.data))
+  const appended = append(objs)
+  const rows = obj_as_rows(appended)
+  const csv = stringify(rows)
+
+  var filename = req.body.outputFile + '.csv'
+  res.setHeader('Content-disposition', 'attachment; filename=' + filename)
+  res.setHeader('Content-type', 'text/csv')
+  res.send(csv)
+})
+
+app.use(express.static('public'))
+
+app.get('/', (req, res) => res.send('Hello World!'))
+
+app.listen(3000, () => console.log('Example app listening on http://localhost:3000'))
